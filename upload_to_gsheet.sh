@@ -26,6 +26,11 @@ if [ ! -f "$PYTHON_SCRIPT" ]; then
     exit 1
 fi
 
+# Activate virtual environment if it exists
+if [ -d "$SCRIPT_DIR/venv" ]; then
+    source "$SCRIPT_DIR/venv/bin/activate"
+fi
+
 # Upload using Python script
 python3 "$PYTHON_SCRIPT" "$SPREADSHEET_NAME" "$TAB_NAME" < "$TEMP_FILE"
 RESULT=$?
