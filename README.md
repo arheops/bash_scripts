@@ -37,8 +37,34 @@ Save to file:
 ./vultr_collect.sh > vultr_inventory.tsv
 ```
 
+Upload to Google Sheets:
+```bash
+./vultr_collect.sh | ./upload_to_gsheet.sh "Vultr Inventory" "Servers"
+```
+
 ### Requirements
 
 - `vultr-cli` installed
 - `jq` installed
 - Vultr API keys configured in `~/.vultr-cli*.yaml` files
+
+## upload_to_gsheet.sh
+
+Uploads tab-separated data from stdin to Google Sheets.
+
+### Setup
+
+See [GSHEETS_SETUP.md](GSHEETS_SETUP.md) for detailed setup instructions.
+
+### Usage
+
+```bash
+cat data.tsv | ./upload_to_gsheet.sh "Spreadsheet Name" "Tab Name"
+```
+
+### Requirements
+
+- Python 3
+- `gspread` and `google-auth` packages
+- Google Cloud credentials.json file
+
