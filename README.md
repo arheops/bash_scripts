@@ -82,3 +82,66 @@ cat data.tsv | ./upload_to_gsheet.sh "Spreadsheet Name" "Tab Name"
 - `gspread` and `google-auth` packages
 - Google Cloud credentials.json file
 
+## inventory/proxmox_list.sh
+
+Lists Proxmox containers across all nodes with their IP addresses.
+
+### Description
+
+This script queries Proxmox nodes to collect information about running containers (LXC). It can run locally on a single node or distribute execution across all nodes in the cluster via SSH.
+
+The script automatically detects the Proxmox cluster nodes by reading `/etc/pve/nodes/` and can execute remotely on each node while running locally on the current node to avoid unnecessary SSH overhead.
+
+### Output Format
+
+The script generates CSV output with the following columns:
+- IP address
+- Node:VMID (e.g., pve22:2104)
+- Hostname
+- Empty fields (for compatibility with other inventory formats)
+- IP address (repeated)
+
+### Usage
+
+Run on local node only:
+```bash
+./proxmox_list.sh pve22
+```
+
+Run on all nodes in cluster:
+```bash
+./proxmox_list.sh
+```
+
+Save to file:
+```bash
+./proxmox_list.sh > proxmox_inventory.csv
+```
+
+### Features
+
+- Automatic cluster node detection from `/etc/pve/nodes/`
+- Local execution when hostname matches node name (no SSH overhead)
+- Remote execution via SSH with 5-second connection timeout
+- Automatic script distribution to remote nodes (`~/bin/` directory)
+- Only lists running containers
+- Extracts IP addresses from `eth0` interface configuration
+- Suppresses diagnostic output for clean CSV generation
+
+### Requirements
+
+- Proxmox VE cluster
+- SSH access configured between cluster nodes
+- `pct` command available on all nodes
+- `~/bin/` directory on remote nodes (created automatically if needed)
+
+### Configuration
+
+The script uses these Proxmox commands:
+- `pct list` - to enumerate containers
+- `pct config <vmid>` - to extract hostname and IP configuration
+
+SSH options used:
+- `ConnectTimeout=5` - 5-second timeout for connections
+
+
